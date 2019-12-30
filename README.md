@@ -1,10 +1,11 @@
 # kafka-connect-protobuf-converter
-Protobuf converter plugin for [Kafka Connect](https://docs.confluent.io/3.2.0/connect/). A converter
+Protobuf converter plugin for [Kafka Connect](https://docs.confluent.io/current/connect/). A converter
 controls the format of the data that will be written to Kafka for source connectors or 
 read from Kafka for sink connectors.
 
 ## Usage
-Copy the `kafka-connect-protobuf-converter` jar and the jar containing your protocol buffers to 
+
+Copy the `kafka-connect-protobuf-converter` jar and the jar containing your compiled protocol buffers to 
 `/usr/share/java/kafka-serde-tools` on your Kafka Connect instance and restart Kafka Connect.
 
 Converters can be specified on a per-connector basis.
@@ -143,7 +144,12 @@ message TestMessage {
 }
 ```
 
+## Contributing
+
+Contributions are warmly welcomed. If fixing a bug, please open an issue on the project before opening a PR. This helps with documentation for other users and will make code review go quicker 🙌
+
 ## Development
+
 #### Run tests:
 ```
 mvn test
