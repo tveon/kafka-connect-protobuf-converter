@@ -1,7 +1,7 @@
 {
   "description": "Protobuf converter plugin for Kafka Connect ",
   "topics": ["kafka-connect","kafka","protobuf"],
-  "extraChecks": [],
+  "checks": ["build"],
   "enableIssues": true,
   "enableWiki": false,
   "enableProjects": false,
