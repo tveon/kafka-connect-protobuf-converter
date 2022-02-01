@@ -57,6 +57,12 @@ public class ProtobufConverter implements Converter {
     try {
       log.info("Initializing ProtobufData with args: [protoClassName={}, legacyName={}, useConnectSchemaMap={}]",
         protoClassName, legacyName, useConnectSchemaMap);
+      // We are using dynamic class-loading to have a generic protobuf converter.
+      // The purpose is to allow having the both this converter and the compiled proto-files on the classpath and having
+      // the fully-qualified classname as a configuration-value.
+      // As the class-name comes from the configuration of the Kafka connector, an attacker would need to be able to
+      // both add a class to the classpath and apply changes to the configuration of a Kafka Connect instance running
+      // with this connector.
       protobufData = new ProtobufData(Class.forName(protoClassName).asSubclass(GeneratedMessageV3.class), legacyName, useConnectSchemaMap);
     } catch (ClassNotFoundException e) {
       throw new ConnectException("Proto class " + protoClassName + " not found in the classpath");
