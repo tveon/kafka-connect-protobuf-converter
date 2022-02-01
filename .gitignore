@@ -1,0 +1,9 @@
+# IDE Specific ignores
+.idea
+*.iml
+
+target
+
+# Maven Release Files
+pom.xml.releaseBackup
+release.properties

@@ -20,16 +20,16 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '50'))
     }
     // For Java people
-    // tools {
-    //    jdk 'oracle-java10.0.1-jdk'
-    //    maven 'apache-maven-3.5.0'
-    // }
-    // environment {
-    //     P12_PASSWORD = credentials 'client-cert-password'
-    //     MAVEN_OPTS = "-Djavax.net.ssl.keyStore=/var/lib/jenkins/.m2/certs/jenkins.p12 \
-    //                   -Djavax.net.ssl.keyStoreType=pkcs12 \
-    //                   -Djavax.net.ssl.keyStorePassword=$P12_PASSWORD"
-    // }
+    tools {
+        jdk 'openjdk8-jdk'
+        maven 'apache-maven-3.6.0'
+    }
+    environment {
+        P12_PASSWORD = credentials 'client-cert-password'
+        MAVEN_OPTS = "-Djavax.net.ssl.keyStore=/var/lib/jenkins/.m2/certs/jenkins.p12 \
+                      -Djavax.net.ssl.keyStoreType=pkcs12 \
+                      -Djavax.net.ssl.keyStorePassword=$P12_PASSWORD"
+    }
 
     stages {
         stage('Clone') {
@@ -37,43 +37,31 @@ pipeline {
                 checkout scm
             }
         }
-        // stage('Compile') {
-        //    steps {
-        //        // Whatever it takes to compile your code
-        //        // sh 'mvn compile'
-        //    }
-        // }
+        stage('Compile') {
+            steps {
+               sh 'mvn compile'
+            }
+        }
 
-        // If you are deploying your service to Kubernetes, uncomment the following stage to make sure your Helm charts are validated before merging
-        // stage('Helm Check') {
-        //    steps {
-        //        helmCheck()
-        //    }
-        // }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
 
-        // Keeping the different phases separate will give you per-phase statistics and a nicer overall structure
-        // stage('Test') {
-        //     steps {
-        //         sh 'mvn test'
-        //     }
-        // }
-
-        // stage('Docker') {
-        //     when {
-        //         anyOf {
-        //             branch 'master'
-        //             expression { getTriggerText() == 'docker push' } // Push PRs docker image only when requested
-        //         }
-        //     }
-        //     steps {
-        //         // TODO: Build image somehow
-        //         dockerPush()
-        //     }
-        // }
+        stage('Publish') {
+            when {
+                anyOf {
+                    branch 'master'
+                    expression { getTriggerText() == 'push' } // Push PRs docker image only when requested
+                }
+            }
+            steps {
+                sh 'mvn deploy'
+            }
+        }
 
         stage('Sonarqube') {
-            // If you use Typescript
-            // sh 'npm install typescript'
             when {
                 anyOf {
                     branch 'master' // Only run Sonarqube on master...
